@@ -1,0 +1,14 @@
+#!/bin/sh
+# B1 IMX219: select the complete 1080p path BEFORE rkaiq initializes.
+set -eu
+tries=0
+until /usr/bin/media-ctl -d /dev/media0 -p 2>/dev/null | /bin/grep -q 'm00_b_imx219'; do
+    tries=$((tries + 1))
+    [ "$tries" -lt 40 ] || { echo "IMX219 media graph unavailable" >&2; exit 1; }
+    sleep 0.25
+done
+/usr/bin/media-ctl -d /dev/media0 --set-v4l2 '"m00_b_imx219 2-0010":0 [fmt:SRGGB10_1X10/1920x1080]'
+/usr/bin/media-ctl -d /dev/media0 --set-v4l2 '"rockchip-csi2-dphy0":0 [fmt:SRGGB10_1X10/1920x1080]'
+/usr/bin/media-ctl -d /dev/media0 --set-v4l2 '"rkisp-csi-subdev":0 [fmt:SRGGB10_1X10/1920x1080]'
+/usr/bin/media-ctl -d /dev/media0 --set-v4l2 '"rkisp-isp-subdev":0 [fmt:SRGGB10_1X10/1920x1080 crop:(0,0)/1920x1080]'
+/usr/bin/media-ctl -d /dev/media0 --set-v4l2 '"rkisp-isp-subdev":2 [fmt:YUYV8_2X8/1920x1080 crop:(0,0)/1920x1080]'
