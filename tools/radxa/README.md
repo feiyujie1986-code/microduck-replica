@@ -19,6 +19,9 @@
 | `card.conf` | 改 WiFi 名 / 密码；首次 `root / 1234` 登录后，向导默认创建 `duck` / `duck1234`。国内要装官方软件时可填 HTTP 代理。**WiFi 两行留空 = 公开镜像模式**，不写 WiFi 认证信息，仍预置 DHCP |
 | `镜像使用说明.md` | 给 release 里那张镜像用的：烧卡、USB 串口登录、连 WiFi、换引导救别的批次的板子 |
 | [摄像头调试记录-20260928.md](摄像头调试记录-20260928.md) | 排线接线参考图、官方 B1 对照结果、IMX219 识别与限量抓帧命令；原 Armbian 正确接线复测待完成 |
+| [b1-camera/](b1-camera/README.md) | B1 + IMX219 + daemon 0.17.1 的 ISP 尺寸及 3A 初始化顺序修复，含主板实测脚本和 systemd drop-in |
+| [摄像头与TOF深入测试-20261019.md](摄像头与TOF深入测试-20261019.md) | 花屏定位、整机重启抓图验证、TOF 恢复识别与连续帧测试 |
+| [喇叭与嘴部联动测试-20261019.md](喇叭与嘴部联动测试-20261019.md) | 90% 播放音量、飞特 ID 34 嘴部开合、12°～15° 和多种叫声的现场演示；模型联动尚未接入 |
 | [联网与HAT调试记录-20260928.md](联网与HAT调试记录-20260928.md) | DHCP 修复后的主板登录、HAT 舵机只读通讯结果和待排查项 |
 | `1-做卡.ps1` | Windows 右键「使用 PowerShell 运行」，选下载的 `.img.xz`，出一个 `xxx-鸭子卡.img`，Rufus 烧它 |
 | `build-armbian-card.sh` | 实际干活的脚本，Linux / WSL 里 `sudo bash build-armbian-card.sh xxx.img.xz card.conf` |
