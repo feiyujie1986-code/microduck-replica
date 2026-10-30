@@ -10,6 +10,8 @@ from mjlab.tasks.registry import list_tasks, load_env_cfg, load_rl_cfg
 BASE = "Mjlab-Velocity-Flat-MicroDuck"
 FLAT = f"{BASE}-HD1910"
 ROUGH = "Mjlab-Velocity-Rough-MicroDuck-HD1910"
+STANDUP = "Mjlab-StandUp-Flat-MicroDuck-HD1910"
+VELSTAND = "Mjlab-VelStand-Flat-MicroDuck-HD1910"
 JOINTS = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
     "neck_pitch", "head_pitch", "head_yaw", "head_roll",
@@ -17,7 +19,7 @@ JOINTS = [
 ]
 
 
-@pytest.mark.parametrize("task", [FLAT, ROUGH])
+@pytest.mark.parametrize("task", [FLAT, ROUGH, STANDUP, VELSTAND])
 def test_hd1910_registered(task):
     assert task in list_tasks()
 
@@ -35,7 +37,7 @@ def test_hd1910_loads_real_bam_model():
     assert actuator.vin_min <= actuator.vin_range[0] <= actuator.vin_range[1]
 
 
-@pytest.mark.parametrize("task", [FLAT, ROUGH])
+@pytest.mark.parametrize("task", [FLAT, ROUGH, STANDUP, VELSTAND])
 @pytest.mark.parametrize("play", [False, True])
 def test_hd1910_preserves_geometry_pose_and_policy_contract(task, play):
     cfg = load_env_cfg(task, play=play)
@@ -79,3 +81,25 @@ def test_hd1910_factories_do_not_mutate_other_tasks():
     assert original_actuator.kp_fw == 200.0
     assert load_rl_cfg(FLAT).experiment_name != load_rl_cfg(BASE).experiment_name
     assert load_rl_cfg(FLAT).actor.obs_normalization
+
+
+def test_hd1910_standup_factory_isolated_from_xl330_task():
+    from mjlab_microduck.tasks.microduck_hd1910_env_cfg import (
+        make_microduck_hd1910_standup_env_cfg,
+    )
+    from mjlab_microduck.tasks.microduck_standup_env_cfg import (
+        make_microduck_standup_env_cfg,
+    )
+
+    hd1910 = make_microduck_hd1910_standup_env_cfg()
+    hd1910.scene.entities["robot"].articulation.actuators[0].kp_fw = 99
+    fresh = make_microduck_hd1910_standup_env_cfg()
+    xl330 = make_microduck_standup_env_cfg()
+    assert fresh.scene.entities["robot"].articulation.actuators[0].kp_fw == 5.0
+    assert xl330.scene.entities["robot"].articulation.actuators[0].kp_fw == 200.0
+    assert load_rl_cfg(STANDUP).experiment_name == "microduck_hd1910_standup"
+
+
+def test_hd1910_velstand_uses_distinct_experiment():
+    assert load_rl_cfg(VELSTAND).experiment_name == "microduck_hd1910_velstand"
+    assert load_rl_cfg(VELSTAND).actor.obs_normalization

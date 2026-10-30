@@ -70,6 +70,10 @@ from .microduck_roulade_env_cfg import (
 from .backlash import make_backlash_variant
 from .microduck_hd1910_env_cfg import (
     MicroduckHD1910RlCfg,
+    MicroduckHD1910StandUpRlCfg,
+    MicroduckHD1910VelStandRlCfg,
+    make_microduck_hd1910_standup_env_cfg,
+    make_microduck_hd1910_velstand_env_cfg,
     make_microduck_hd1910_velocity_env_cfg,
 )
 from .microduck_balance_env_cfg import (
@@ -82,6 +86,22 @@ register_mjlab_task(
     env_cfg=make_microduck_balance_env_cfg(),
     play_env_cfg=make_microduck_balance_env_cfg(play=True),
     rl_cfg=MicroduckBalanceRlCfg,
+    runner_cls=MicroduckOnPolicyRunner,
+)
+
+register_mjlab_task(
+    task_id="Mjlab-StandUp-Flat-MicroDuck-HD1910",
+    env_cfg=make_microduck_hd1910_standup_env_cfg(),
+    play_env_cfg=make_microduck_hd1910_standup_env_cfg(play=True),
+    rl_cfg=MicroduckHD1910StandUpRlCfg,
+    runner_cls=MicroduckOnPolicyRunner,
+)
+
+register_mjlab_task(
+    task_id="Mjlab-VelStand-Flat-MicroDuck-HD1910",
+    env_cfg=make_microduck_hd1910_velstand_env_cfg(),
+    play_env_cfg=make_microduck_hd1910_velstand_env_cfg(play=True),
+    rl_cfg=MicroduckHD1910VelStandRlCfg,
     runner_cls=MicroduckOnPolicyRunner,
 )
 
